@@ -1,0 +1,125 @@
+{% extends "dealer/base.html" %}
+
+{% block css %}
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+<style>
+  #mapModalMap { height: 400px; width: 100%; }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2>Available Pickup Requests</h2>
+    {% if requests %}
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>Seller</th>
+                    <th>Address</th>
+                    <th>City</th>
+                    <th>Items</th>
+                    <th>Requested For</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for request in requests %}
+                <tr>
+                    <td>{{ request.seller.name }}</td>
+                    <td>
+                        {{ request.address }}
+                        <br>
+                        <a class="btn btn-outline-primary btn-sm mt-1"
+                            target="_blank"
+                            href="{% url 'pickup_map' %}?lat={{ request.latitude }}&lng={{ request.longitude }}&address={{ request.address|urlencode }}">
+                            View on Map
+                        </a>
+
+                    </td>
+                    <td>{{ request.city }}</td>
+                    <td>
+                        {% for item in request.items.all %}
+                            {{ item.category.name }} ({{ item.approx_weight }}kg)<br>
+                        {% endfor %}
+                    </td>
+                    <td>{{ request.preferred_datetime }}</td>
+                    <td>
+                        <a href="{% url 'accept_pickup_request' request.id %}" class="btn btn-success btn-sm">
+                            Accept
+                        </a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+        <p>No pickup requests available in your city.</p>
+    {% endif %}
+</div>
+
+<!-- Map Modal -->
+<div class="modal fade" id="mapModal" tabindex="-1" aria-labelledby="mapModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Pickup Location</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body">
+        <div id="mapModalMap"></div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script>
+let mapModal = null;
+let markerModal = null;
+
+document.addEventListener("DOMContentLoaded", function() {
+    const modalEl = document.getElementById("mapModal");
+    const mapContainer = document.getElementById("mapModalMap");
+
+    const bsModal = new bootstrap.Modal(modalEl);
+
+    // Initialize map when modal is first shown
+    modalEl.addEventListener('shown.bs.modal', function () {
+        if (!mapModal) {
+            mapModal = L.map(mapContainer).setView([0, 0], 2);
+            L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+                attribution: "&copy; OpenStreetMap contributors",
+                maxZoom: 19
+            }).addTo(mapModal);
+            markerModal = L.marker([0, 0]).addTo(mapModal);
+        }
+        // Ensure map resizes properly after modal animation
+        setTimeout(() => mapModal.invalidateSize(), 200);
+    });
+
+    // Handle view map button clicks
+    const buttons = document.querySelectorAll(".view-map-btn");
+    buttons.forEach(btn => {
+        btn.addEventListener("click", function() {
+            const lat = parseFloat(this.dataset.lat);
+            const lng = parseFloat(this.dataset.lng);
+            const address = this.dataset.address;
+
+            if (markerModal) {
+                markerModal.setLatLng([lat, lng]);
+                markerModal.bindPopup(address).openPopup();
+            }
+
+            if (mapModal) {
+                mapModal.setView([lat, lng], 14);
+                setTimeout(() => mapModal.invalidateSize(), 100);
+            }
+
+            bsModal.show();
+        });
+    });
+});
+</script>
+{% endblock %}

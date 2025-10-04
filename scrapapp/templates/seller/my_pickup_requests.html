@@ -1,0 +1,88 @@
+{% extends "seller/base.html" %}
+{% block content %}
+<div class="col-lg-9">
+        <div class="row g-4">
+            <div class="col-md-4 h-auto w-100 overflow-visible">
+  <div class="card soft p-3 h-auto w-100 overflow-visible">
+
+    {% if requests %}
+    
+  <div class="table-responsive mt-3">
+    <table class="table table-bordered table-striped mb-0">
+            <thead class="thead-dark">
+                <tr>
+                    <th>#</th>
+                    <th>Address</th>
+                    <th>City</th>
+                    <th>Categories</th>
+                    <th>Total Weight (kg)</th>
+                    <th>Status</th>
+                    <th>Requested For</th>
+                    <th>Cancel</th>
+                    
+                </tr>
+            </thead>
+            <tbody>
+                {% for req in requests %}
+                <tr>
+                    <td>{{ forloop.counter }}</td>
+                    <td>{{ req.address }}</td>
+                    <td>{{ req.city }}</td>
+                    <td>
+                        <ul>
+                        {% for item in req.items.all %}
+                            <li>{{ item.category.name }} - {{ item.approx_weight }} kg</li>
+                        {% endfor %}
+                        </ul>
+                    </td>
+                    <td>
+                        {% if req.status == 'pending' %}
+                            {{ req.total_approx_weight }}
+                        {% elif req.status == 'completed' %}
+                            {{ req.total_verified_weight }}
+                        {% elif req.status == 'scheduled' %}
+                            {{ req.total_verified_weight }} <br>
+                            <small class="text-muted">
+                                Scheduled for: {{ req.dealer_pickup.scheduled_datetime|date:"d M Y, H:i" }}
+                            </small>
+                            <a href="{% url 'request_reschedule' req.dealer_pickup.id %}">Request reschedule</a>
+                        {% endif %}
+                    </td>
+                    <td>
+                        <span class="badge 
+                            {% if req.status == 'pending' %} bg-warning
+                            {% elif req.status == 'accepted' %} bg-info
+                            {% elif req.status == 'completed' %} bg-success
+                            {% elif req.status == 'scheduled' %} bg-primary
+                            {% endif %}">
+                            {{ req.status|title }}                            
+                        </span>
+                        {% if req.status == 'pending' %}
+                            <a href="{% url 'edit_pickup_request' req.id %}" class="btn btn-success">Edit</a>
+                            {% endif %}
+                    </td>
+                    <td>{{ req.preferred_datetime|date:"d M Y, H:i" }}</td>
+
+                    <td>
+                        {% if req.status != "cancelled" %}
+                            <a href="{% url 'cancel_pickup_request' req.id %}" class='btn btn-warning'>Cancel</a>
+                        {% else%}
+                            cancelled
+                        {% endif %}
+                    </td>
+
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% else %}
+        <div class="alert alert-info mt-3">
+            You haven’t made any pickup requests yet.
+        </div>
+    {% endif %}
+    </div>
+</div>
+</div>
+</div>
+{% endblock %}

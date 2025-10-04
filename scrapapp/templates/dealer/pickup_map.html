@@ -1,0 +1,46 @@
+{% comment %} {% extends "dealer/base.html" %}
+
+{% block css %} {% endcomment %}
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+<style>
+  /* Make map fill the available height */
+  html, body, .app-shell, .row.g-4, #pickupMap {
+      height: 100%;
+      margin: 0;
+      padding: 0;
+  }
+
+  #pickupMap {
+      width: 100%;
+  }
+</style>
+{% comment %} {% endblock %}
+
+{% block content %} {% endcomment %}
+<div class="col-lg-9">
+  <div id="pickupMap"></div>
+</div>
+{% comment %} {% endblock %}
+
+{% block scripts %} {% endcomment %}
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+    const urlParams = new URLSearchParams(window.location.search);
+    const lat = parseFloat(urlParams.get('lat')) || 0;
+    const lng = parseFloat(urlParams.get('lng')) || 0;
+    const address = urlParams.get('address') || "Pickup Location";
+
+    const map = L.map('pickupMap').setView([lat, lng], 14);
+
+    L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+        attribution: "&copy; OpenStreetMap contributors",
+        maxZoom: 19
+    }).addTo(map);
+
+    L.marker([lat, lng]).addTo(map)
+        .bindPopup(address)
+        .openPopup();
+});
+</script>
+{% comment %} {% endblock %} {% endcomment %}

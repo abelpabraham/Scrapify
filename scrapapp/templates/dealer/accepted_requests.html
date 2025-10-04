@@ -1,0 +1,74 @@
+{% extends "dealer/base.html" %}
+{% block content %}
+<div class="container mt-4">
+    <h2>Accepted Pickup Requests</h2>
+
+    {% if pickups %}
+        <table class="table table-bordered table-striped mt-3">
+            <thead class="thead-dark">
+                <tr>
+                    <th>#</th>
+                    <th>Seller</th>
+                    <th>Address</th>
+                    <th>Requested For</th>
+                    <th>Status</th>
+                    <th colspan="2">Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for pickup in pickups %}
+                <tr>
+                    <td>{{ forloop.counter }}</td>
+                    <td>{{ pickup.request.seller.name }}</td>
+                    <td>{{ pickup.request.seller.address }}
+                        <br>
+                        <a class="btn btn-outline-primary btn-sm mt-1"
+                            target="_blank"
+                            href="{% url 'pickup_map' %}?lat={{ pickup.request.latitude }}&lng={{ pickup.request.longitude }}&address={{ request.address|urlencode }}">
+                            View on Map
+                        </a>
+                    </td>
+                    <td>{{ pickup.request.preferred_datetime|date:"d M Y, H:i" }}</td>
+                    <td>
+                        <span class="badge 
+                            {% if pickup.request.status == 'accepted' %} bg-warning
+                            {% elif pickup.request.status == 'completed' %} bg-success
+                            {% elif pickup.request.status == 'scheduled' %} bg-primary
+                            {% endif %}">
+                            {{ pickup.request.status|title }}
+                        </span>
+                    </td>
+                    <td>
+                        {% if pickup.request.status == "accepted" %}
+                            <a href="{% url 'schedule_pickup' pickup.request.id %}" class="btn btn-primary">
+                                Schedule
+                            </a>
+                        {% elif pickup.request.status == "scheduled" %}
+                            <span class="text-muted">
+                                Scheduled for: {{ pickup.scheduled_datetime|date:"d M Y, H:i" }}
+                            </span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if pickup.request.status == "accepted" or pickup.request.status == "scheduled" %}
+                            <a href="{% url 'verify_pickup_request' pickup.request.id %}" class="btn btn-sm btn-primary">
+                                Verify
+                            </a>
+                        {% elif pickup.request.status == "completed" %}
+                            <span class="text-muted">Verified</span>
+                        {% else %}
+                            <span class="text-muted">-</span>
+                        {% endif %}
+                    </td>
+
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+        <div class="alert alert-info mt-3">
+            No accepted pickup requests yet.
+        </div>
+    {% endif %}
+</div>
+{% endblock %}

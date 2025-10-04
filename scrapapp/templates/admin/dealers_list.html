@@ -1,0 +1,122 @@
+{% extends 'admin/bas.html' %}
+
+{% block content %}
+<!-- Dealers Table -->
+<div class="container mx-auto">
+    <div class="table-responsive table-card bg-white shadow rounded-lg p-4">
+        <table class="table align-middle table-nowrap mb-0">
+            <thead class="table-light">
+                <tr>
+                    <td class="py-3 font-extrabold text-sm">Name</td>
+                    <td class="py-3 font-extrabold text-sm">Email</td>
+                    <td class="py-3 font-extrabold text-sm">City</td>
+                    <td class="py-3 font-extrabold text-sm">Status</td>
+                    <td class="py-3 font-extrabold text-sm text-center">Action</td>
+                </tr>
+            </thead>
+            <tbody>
+                {% for dealer in dealers %}
+                <tr class="border-t">
+                    <td class="py-3 text-sm text-gray-600">{{ dealer.name }}</td>
+                    <td class="py-3 text-sm text-gray-600">{{ dealer.email }}</td>
+                    <td class="py-3 text-sm text-gray-600">{{ dealer.city }}</td>
+                    <td class="py-3 text-sm text-center">
+                        {% if dealer.is_active %}
+                            <span class="badge bg-success">Active</span>
+                        {% else %}
+                            <span class="badge bg-danger">Inactive</span>
+                        {% endif %}
+                    </td>
+                    <td class="py-3 text-sm text-center">
+                        <!-- Toggle Button -->
+                        <a href="{% url 'toggle_user_active' dealer.id %}" 
+                           class="btn btn-sm {% if dealer.is_active %}btn-danger{% else %}btn-success{% endif %}">
+                            {% if dealer.is_active %}Deactivate{% else %}Activate{% endif %}
+                        </a>
+
+                        <!-- Existing View Rates Button -->
+                        <button type="button" class="btn btn-primary view-rates" data-id="{{ dealer.id }}">
+                            View Rates
+                        </button>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}
+
+{% block modals %}
+
+<!-- Scrollable Dealer Rates Modal -->
+<div class="modal fade" id="dealerRatesModal" tabindex="-1" role="dialog" aria-labelledby="dealerRatesModalTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-scrollable">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="dealerRatesModalTitle">Dealer Rates</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body" id="dealerRatesBody">
+                <!-- Rates will be loaded here dynamically -->
+                <div class="text-center py-4">Loading…</div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-light" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+    const modal = new bootstrap.Modal(document.getElementById('dealerRatesModal'));
+    const ratesBody = document.getElementById('dealerRatesBody');
+
+    document.body.addEventListener("click", async e => {
+        if (e.target.classList.contains("view-rates")) {
+            const dealerId = e.target.dataset.id;
+            ratesBody.innerHTML = `<div class="text-center py-4">Loading…</div>`;
+            modal.show();
+
+            try {
+                const res = await fetch(`/dealers/${dealerId}/rates/`);
+                const data = await res.json();
+
+                if (!data.rates.length) {
+                    ratesBody.innerHTML = `<div class="text-center py-4">No rates found</div>`;
+                } else {
+                    ratesBody.innerHTML = data.rates.map(r => {
+                        // Determine button states
+                        const isApproved = r.approved;
+                        const isRejected = r.rejected; // you need to track this in your model
+                        const approveDisabled = isApproved ? "disabled" : "";
+                        const rejectDisabled = isRejected ? "disabled" : "";
+
+                        return `
+                            <div class="d-flex align-items-center mt-2 border-bottom pb-2">
+                                <div class="flex-grow-1">
+                                    <p class="mb-1"><strong>Category:</strong> ${r.category}</p>
+                                    <p class="mb-1"><strong>Rate:</strong> ₹${r.rate}/kg</p>
+                                    <p class="mb-1"><strong>Status:</strong> 
+                                        ${isApproved ? "✅ Approved" : isRejected ? "❌ Rejected" : "Pending"}
+                                    </p>
+                                </div>
+                                <div class="flex-shrink-0 ms-2 d-flex gap-1">
+                                    <a href="/approve-rate/${r.id}/" class="btn btn-success btn-sm" ${approveDisabled}>Approve</a>
+                                    <a href="/reject-rate/${r.id}/" class="btn btn-danger btn-sm" ${rejectDisabled}>Reject</a>
+                                </div>
+                            </div>
+                        `;
+                    }).join('');
+                }
+            } catch {
+                ratesBody.innerHTML = `<div class="text-center text-danger py-4">Error loading rates</div>`;
+            }
+        }
+    });
+});
+</script>
+
+
+{% endblock %}

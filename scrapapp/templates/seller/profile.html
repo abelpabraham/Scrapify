@@ -1,0 +1,47 @@
+{% extends 'seller/base.html' %}
+{% load static %}
+{% block content %}
+
+<div class="col-lg-9">
+  <div class="row g-4">
+
+    <!-- Profile Header -->
+    <div class="col-12">
+      <div class="card soft p-4 d-flex flex-row align-items-center">
+        <img src="{% static 'assets/img/av1.jpg' %}" class="rounded-circle me-3" width="80" height="80" alt="Profile Picture">
+        <div>
+          <h5 class="mb-1">{{ user.name }}</h5>
+          <small class="text-muted">Seller ID: {{ user.custom_id }}</small><br>
+          <span class="badge bg-success mt-1">Active</span>
+        </div>
+        <div class="ms-auto">
+          <a href="{% url 'edit_profile' %}" class="btn btn-outline-primary btn-sm">Edit Profile</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Contact Info -->
+    <div class="col-md-6">
+      <div class="card soft p-3">
+        <h6>Contact Information</h6>
+        <ul class="list-group list-group-flush mt-2">
+          <li class="list-group-item">📞 {{ user.phone|default:"Not Provided" }}</li>
+          <li class="list-group-item">✉️ {{ user.email }}</li>
+          <li class="list-group-item">📍 {{ user.city|default:"Not Provided" }}</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- Account Info -->
+    <div class="col-md-6">
+      <div class="card soft p-3">
+        <h6>Account Details</h6>
+        <p class="text-muted">Role: <strong>{{ user.get_role_display }}</strong></p>
+        <p class="text-muted">Member Since: {{ user.date_joined|date:"M d, Y" }}</p>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+{% endblock %}

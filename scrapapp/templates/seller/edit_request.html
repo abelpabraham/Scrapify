@@ -1,0 +1,14 @@
+{% extends "seller/base.html" %}
+{% block content %}
+<div class="col-lg-9">
+        <div class="row g-4">
+  <h2>Edit Pickup Request #{{ request_obj.id }}</h2>
+  <form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit" class="btn btn-success">Save</button>
+    <a href="{% url 'my_pickup_requests' %}" class="btn btn-secondary">Cancel</a>
+  </form>
+</div>
+</div>
+{% endblock %}

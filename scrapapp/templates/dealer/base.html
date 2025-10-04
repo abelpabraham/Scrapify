@@ -1,0 +1,97 @@
+{% load static %}
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/><meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Dealer Dashboard — Scrapify</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="{% static 'assets/css/main.css' %}" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
+  <style>
+  .material-toast {
+  font-family: 'Roboto', sans-serif;
+  font-weight: 500;
+  font-size: 14px;
+  color: #fff;
+  padding: 12px 20px;
+  border-radius: 12px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.2), 0 2px 4px rgba(0,0,0,0.1);
+  backdrop-filter: blur(8px); /* subtle glossy effect */
+  border: 1px solid rgba(255,255,255,0.2); /* highlights for reflection */
+  text-shadow: 0 1px 1px rgba(0,0,0,0.2);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+/* Hover effect for extra “pop” */
+.material-toast:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 14px rgba(0,0,0,0.3), 0 3px 6px rgba(0,0,0,0.15);
+}
+
+/* Notification colors */
+.material-toast.success { background: linear-gradient(145deg, #66bb6a, #43a047); }
+.material-toast.error { background: linear-gradient(145deg, #ef5350, #e53935); }
+.material-toast.warning { background: linear-gradient(145deg, #ffa726, #fb8c00); }
+.material-toast.info { background: linear-gradient(145deg, #42a5f5, #1e88e5); }
+</style>
+
+</head>
+<body>
+  <div class="container-fluid app-shell">
+    <div class="row g-4">
+      <div class="col-lg-3">
+        <div class="sidebar">
+          <div class="d-flex align-items-center mb-3">
+            <div class="avatar rounded-circle me-2" style="width:48px;height:48px;background:linear-gradient(135deg,#E7F7EE,#9FD8FF)"></div>
+            <div>
+              <div class="fw-bold">{{ dealer.name }}</div>
+              <div class="small text-muted">{{dealer.role}}</div>
+            </div>
+          </div>
+          <nav class="nav flex-column">
+            <a class="nav-link" href="{% url 'dealer_dashboard' %}">Home</a>
+            <a class="nav-link" href="{% url 'manage_rates' %}">Manage Rates</a>
+            <a class="nav-link" href="{% url 'dealer_pickup_requests' %}">Pickup Requests</a>
+            <a class="nav-link" href="{% url 'dealer_accepted_pickup_requests' %}">Accepted Requests</a>
+            <a class="nav-link" href="{% url 'dealer_reschedule_list' %}">Reschedule request</a>
+            <a class="nav-link" href="{% url 'dealer_profile' %}">Profile</a>
+            <a class="nav-link" href="{% url 'logout' %}">Logout</a>
+          </nav>
+        </div>
+      </div>
+      <div class="col-lg-9">
+        <div class="row g-4">
+          
+      {% block content %}
+      {% endblock %}
+        </div>
+    
+  </div>
+    </div>
+  </div>
+    
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+<script src="{% static 'assets/js/main.js' %}"></script>
+<script src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
+
+<script>
+  {% if messages %}
+    {% for message in messages %}
+      Toastify({
+        text: "{{ message|escapejs }}",
+        duration: 4000,
+        gravity: "top",
+        position: "right",
+        close: true,
+        stopOnFocus: true,
+        className: "material-toast {{ message.tags }}"
+      }).showToast();
+    {% endfor %}
+  {% endif %}
+</script>
+
+</body>
+</html>

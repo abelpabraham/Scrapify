@@ -1,0 +1,107 @@
+{% load static %}
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Scrapify — About</title>
+
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{% static 'assets/css/main.css' %}">
+</head>
+<body class="bg-light-app">
+
+  <!-- NAV -->
+  <nav class="navbar navbar-expand-lg py-3 fixed-top">
+    <div class="container">
+      <a class="navbar-brand d-flex align-items-center" href="{% url 'index' %}">
+        <div class="brand-badge me-2">♻️</div>
+        <div>
+          <div class="h6 mb-0 text-primary-600">Scrapify</div>
+          <small class="text-muted d-block">Scrap Management System</small>
+        </div>
+      </a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navMenu">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navMenu">
+        <ul class="navbar-nav ms-auto align-items-lg-center">
+          <li class="nav-item"><a class="nav-link" href="{% url 'about' %}">About</a></li>
+          <li class="nav-item"><a class="nav-link" href="{% url 'contact' %}">Contact</a></li>
+          <li class="nav-item ms-lg-3"><a class="btn btn-outline-primary rounded-pill" href="{% url 'register' %}">Login / Register</a></li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <!-- MAIN CONTENT -->
+  <section class="container py-5">
+    <div class="row g-4 align-items-center">
+      <div class="col-lg-6">
+        <img src="{% static 'assets/img/about.png' %}" class="img-fluid rounded-4 shadow-soft" alt="Scrapify Team">
+      </div>
+      <div class="col-lg-6">
+        <h1 class="fw-bold mb-3">About Scrapify</h1>
+        <p class="lead text-muted">Scrapify is built to make recycling smarter and more impactful. We connect households, scrap dealers, and admins with a smooth platform that handles everything — from pickups to rate management.</p>
+        <p class="text-muted">Our mission is to reduce waste, promote sustainability, and empower local communities by turning recyclable materials into valuable resources. With real-time tracking, transparent pricing, and eco-friendly workflows, we ensure a trusted and efficient recycling network.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- VALUES -->
+  <section class="container py-5">
+    <div class="text-center mb-5">
+      <h2 class="fw-bold">Our Values</h2>
+      <p class="text-muted">What drives us every day.</p>
+    </div>
+    <div class="row g-4">
+      <div class="col-md-4">
+        <div class="card soft-card p-4 h-100 text-center">
+          <div class="icon-circle mb-3">🌍</div>
+          <h5>Sustainability</h5>
+          <p class="text-muted">Reducing waste and promoting eco-friendly practices.</p>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="card soft-card p-4 h-100 text-center">
+          <div class="icon-circle mb-3">🤝</div>
+          <h5>Trust</h5>
+          <p class="text-muted">Fair, transparent, and reliable partnerships with all users.</p>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="card soft-card p-4 h-100 text-center">
+          <div class="icon-circle mb-3">🚀</div>
+          <h5>Innovation</h5>
+          <p class="text-muted">Smart technology to make recycling simple and efficient.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer class="bg-white border-top py-4 mt-5">
+    <div class="container d-flex justify-content-between align-items-center">
+      <div>
+        <strong>Scrapify</strong> • Built for cities and scrap dealers.
+      </div>
+      <div class="text-muted small">© <span id="year"></span> Scrapify Inc.</div>
+    </div>
+  </footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+  <script>
+    window.addEventListener("scroll", function () {
+      const navbar = document.querySelector(".navbar");
+      if (window.scrollY > 50) {
+        navbar.classList.add("scrolled");
+      } else {
+        navbar.classList.remove("scrolled");
+      }
+    });
+    document.getElementById("year").textContent = new Date().getFullYear();
+  </script>
+</body>
+</html>

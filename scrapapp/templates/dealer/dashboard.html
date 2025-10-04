@@ -1,0 +1,100 @@
+{% extends "dealer/base.html" %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2>Dealer Dashboard</h2>
+    <hr>
+
+    <!-- Summary Cards -->
+    <div class="row text-center mb-4">
+        <div class="col-md-3">
+            <div class="card shadow p-3">
+                <h6>Total Requests in City</h6>
+                <h4>{{ total_requests_in_city }}</h4>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card shadow p-3">
+                <h6>Accepted Pickups</h6>
+                <h4>{{ accepted_pickups }}</h4>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card shadow p-3">
+                <h6>Completed Pickups</h6>
+                <h4>{{ completed_requests }}</h4>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card shadow p-3">
+                <h6>Pending (Yet to Complete)</h6>
+                <h4>{{ yet_to_complete }}</h4>
+            </div>
+        </div>
+    </div>
+
+    <!-- Total Recycled -->
+    <div class="card shadow p-3 mb-4 text-center">
+        <h6>Total KG Collected</h6>
+        <h4>{{ total_recycled_kg }} kg</h4>
+    </div>
+
+    <!-- Last 3 Verified Pickups -->
+    <div class="card shadow p-3">
+        <h5>Last Verified Pickups</h5>
+        <table class="table table-bordered mt-3">
+            <thead>
+                <tr>
+                    <th>#ID</th>
+                    <th>Seller</th>
+                    <th>Date</th>
+                    <th>Total Weight (kg)</th>
+                    <th>Final Amount (₹)</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for pickup in verified_pickups_data %}
+                <tr>
+                    <td>{{ pickup.id }}</td>
+                    <td>{{ pickup.seller }}</td>
+                    <td>{{ pickup.date|date:"d M Y, H:i" }}</td>
+                    <td>{{ pickup.total_weight }}</td>
+                    <td>₹{{ pickup.final_amount }}</td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="5" class="text-center text-muted">No verified pickups yet.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- 👇 Modal for Add Rates -->
+<div class="modal fade" id="addRatesModal" tabindex="-1" aria-labelledby="addRatesModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="addRatesModalLabel">Add Your Rates</h5>
+      </div>
+      <div class="modal-body">
+        You haven't added your scrap rates yet. Please add them to start accepting pickup requests.
+      </div>
+      <div class="modal-footer">
+        <a href="{% url 'manage_rates' %}" class="btn btn-primary">Add Rates</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% if not has_rates %}
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        var modal = new bootstrap.Modal(document.getElementById('addRatesModal'));
+        modal.show();
+    });
+</script>
+{% endif %}
+
+{% endblock %}

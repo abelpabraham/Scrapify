@@ -1,0 +1,17 @@
+{% extends "dealer/base.html" %}
+{% block content %}
+<div class="container mt-4">
+  <h2>Reschedule Requests</h2>
+  {% for rr in reschedules %}
+  <div class="card mb-2 p-3">
+    <p><strong>Pickup:</strong> #{{ rr.pickup_request.id }} — Seller: {{ rr.requested_by.name }}</p>
+    <p><strong>Requested at:</strong> {{ rr.requested_datetime|date:"d M Y, H:i" }}</p>
+    <p><strong>Reason:</strong> {{ rr.reason }}</p>
+    <a href="{% url 'respond_reschedule' rr.id 'accept' %}" class="btn btn-success btn-sm">Accept</a>
+    <a href="{% url 'respond_reschedule' rr.id 'reject' %}" class="btn btn-danger btn-sm">Reject</a>
+  </div>
+  {% empty %}
+  <p>No reschedule requests.</p>
+  {% endfor %}
+</div>
+{% endblock %}

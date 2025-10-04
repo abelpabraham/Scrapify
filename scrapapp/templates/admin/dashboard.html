@@ -1,0 +1,98 @@
+{% extends 'admin/bas.html' %}
+{% block content %}
+{% load static %}
+
+<div class="row">
+    <!-- Total Dealers -->
+    <div class="col-xl-3 col-md-6">
+        <div class="card card-animate">
+            <div class="card-body">
+                <p class="text-uppercase fw-medium text-muted mb-0">Total Dealers</p>
+                <h4 class="fs-22 fw-semibold ff-secondary mb-4">
+                    {{ total_dealers }} 
+                    <small class="text-success">(Approved: {{ approved_dealers }})</small>
+                </h4>
+            </div>
+        </div>
+    </div>
+
+    <!-- Total Sellers -->
+    <div class="col-xl-3 col-md-6">
+        <div class="card card-animate">
+            <div class="card-body">
+                <p class="text-uppercase fw-medium text-muted mb-0">Total Sellers</p>
+                <h4 class="fs-22 fw-semibold ff-secondary mb-4">{{ total_sellers }}</h4>
+            </div>
+        </div>
+    </div>
+
+    <!-- Pending Dealer Approvals -->
+    <div class="col-xl-3 col-md-6">
+        <div class="card card-animate">
+            <div class="card-body">
+                <p class="text-uppercase fw-medium text-muted mb-0">Pending Dealer Approvals</p>
+                <h4 class="fs-22 fw-semibold ff-secondary mb-4">{{ pending_dealer_approvals }}</h4>
+            </div>
+        </div>
+    </div>
+
+    <!-- Open Pickup Requests -->
+    <div class="col-xl-3 col-md-6">
+        <div class="card card-animate">
+            <div class="card-body">
+                <p class="text-uppercase fw-medium text-muted mb-0">Open Pickup Requests</p>
+                <h4 class="fs-22 fw-semibold ff-secondary mb-4">{{ open_requests }}</h4>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row mt-4">
+    <!-- Completed Pickups This Month -->
+    <div class="col-xl-3 col-md-6">
+        <div class="card card-animate bg-light">
+            <div class="card-body">
+                <p class="text-uppercase fw-medium text-muted mb-0">Completed Pickups (This Month)</p>
+                <h4 class="fs-22 fw-semibold ff-secondary mb-4">{{ completed_this_month }}</h4>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="card mt-4">
+  <div class="card-header d-flex justify-content-between align-items-center">
+    <h5>Recycling Statistics ({{ period|title }})</h5>
+    <form method="get">
+      <select name="period" onchange="this.form.submit()" class="form-select form-select-sm w-auto d-inline">
+        <option value="week" {% if period == 'week' %}selected{% endif %}>Last 7 Days</option>
+        <option value="month" {% if period == 'month' %}selected{% endif %}>This Month</option>
+      </select>
+    </form>
+  </div>
+  <div class="card-body">
+    <canvas id="recycleChart" height="100"></canvas>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+{{ total_picked|default:0|json_script:"total-picked" }}
+{{ total_recycled_period|default:0|json_script:"total-recycled" }}
+
+<script>
+  const totalPicked = JSON.parse(document.getElementById("total-picked").textContent);
+  const totalRecycled = JSON.parse(document.getElementById("total-recycled").textContent);
+
+  new Chart(document.getElementById('recycleChart'), {
+    type: 'bar',
+    data: {
+      labels: ['Picked Up (Kg)', 'Recycled (Kg)'],
+      datasets: [{
+        label: 'Kg',
+        data: [totalPicked, totalRecycled],
+        backgroundColor: ['#36a2eb', '#4caf50'],
+      }]
+    }
+  });
+</script>
+
+
+{% endblock %}

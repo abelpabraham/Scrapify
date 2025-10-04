@@ -1,0 +1,35 @@
+{% extends 'admin/bas.html' %}
+{% load static %}
+
+{% block content %}
+<div class="card">
+    <div class="card-body">
+
+        <div class="d-flex justify-between items-center mb-4">
+            <h2 class="text-xl font-bold">Add Scrap Category</h2>
+            {% comment %} <a href="{% url 'list_categories' %}" class="btn btn-secondary btn-sm">Back to List</a> {% endcomment %}
+        </div>
+
+        <form method="post" class="space-y-4">
+            {% csrf_token %}
+
+            <!-- loop through fields for consistent styling -->
+            {% for field in form %}
+                <div class="mb-3">
+                    <label for="{{ field.id_for_label }}" class="form-label">{{ field.label }}</label>
+                    {{ field }}
+                    {% if field.help_text %}
+                        <small class="form-text text-muted">{{ field.help_text }}</small>
+                    {% endif %}
+                    {% for error in field.errors %}
+                        <div class="text-danger small">{{ error }}</div>
+                    {% endfor %}
+                </div>
+            {% endfor %}
+
+            <button type="submit" class="btn btn-info">Add Category</button>
+        </form>
+
+    </div>
+</div>
+{% endblock %}

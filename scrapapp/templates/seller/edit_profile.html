@@ -1,0 +1,59 @@
+{% extends 'seller/base.html' %} 
+{% load static %}
+{% block content %}
+
+<div class="col-lg-9">
+  <div class="card soft p-4">
+    <h5 class="mb-3">Edit Profile</h5>
+    <form method="post" novalidate>
+      {% csrf_token %}
+
+      <!-- Show messages -->
+      {% if messages %}
+        <div>
+          {% for message in messages %}
+            <div class="alert alert-{{ message.tags }}">{{ message }}</div>
+          {% endfor %}
+        </div>
+      {% endif %}
+
+      <!-- Render form fields -->
+      <div class="mb-3">
+        <label for="id_name" class="form-label">Full Name</label>
+        {{ form.name }}
+        {% if form.name.errors %}
+          <div class="text-danger small">{{ form.name.errors }}</div>
+        {% endif %}
+      </div>
+
+      <div class="mb-3">
+        <label for="id_email" class="form-label">Email</label>
+        {{ form.email }}
+        {% if form.email.errors %}
+          <div class="text-danger small">{{ form.email.errors }}</div>
+        {% endif %}
+      </div>
+
+      <div class="mb-3">
+        <label for="id_phone" class="form-label">Phone</label>
+        {{ form.phone }}
+        {% if form.phone.errors %}
+          <div class="text-danger small">{{ form.phone.errors }}</div>
+        {% endif %}
+      </div>
+
+      <div class="mb-3">
+        <label for="id_city" class="form-label">City</label>
+        {{ form.city }}
+        {% if form.city.errors %}
+          <div class="text-danger small">{{ form.city.errors }}</div>
+        {% endif %}
+      </div>
+
+      <button type="submit" class="btn btn-success">Save Changes</button>
+      <a href="{% url 'seller_profile' %}" class="btn btn-outline-secondary">Cancel</a>
+    </form>
+  </div>
+</div>
+
+{% endblock %}

@@ -1,0 +1,34 @@
+{% extends "admin/bas.html" %}
+
+{% block content %}
+<h2 class="mb-4">Sellers List</h2>
+
+<div class="table-responsive table-card bg-white shadow rounded-lg p-4">
+  <table class="table align-middle table-nowrap mb-0">
+    <thead class="table-light">
+      <tr>
+        <th class="py-3 font-extrabold text-sm">ID</th>
+        <th class="py-3 font-extrabold text-sm">Name</th>
+        <th class="py-3 font-extrabold text-sm">Email</th>
+        <th class="py-3 font-extrabold text-sm">Phone</th>
+        <th class="py-3 font-extrabold text-sm">City</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for seller in sellers %}
+      <tr class="border-t">
+        <td class="py-3 text-sm text-gray-600">{{ seller.id }}</td>
+        <td class="py-3 text-sm text-gray-600">{{ seller.name }}</td>
+        <td class="py-3 text-sm text-gray-600">{{ seller.email }}</td>
+        <td class="py-3 text-sm text-gray-600">{{ seller.phone }}</td>
+        <td class="py-3 text-sm text-gray-600">{{ seller.city }}</td>
+      </tr>
+      {% empty %}
+      <tr>
+        <td colspan="5" class="text-center py-4">No sellers found.</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}

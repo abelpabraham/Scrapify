@@ -1,0 +1,121 @@
+{% extends "seller/base.html" %}
+
+{% block css %}
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+<style>
+  #map { height: 400px; width: 100%; }
+  .leaflet-container { background: #f0f0f0; }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="col-lg-9">
+  <form method="post">
+    {% csrf_token %}
+    <div class="card p-3 mb-3">
+      <h5>Pickup Details</h5>
+      {{ request_form.as_p }}
+    </div>
+
+    <div class="card p-3 mb-3">
+      <h5>Location</h5>
+      <button type="button" class="btn btn-primary me-2" onclick="useMyLocation()">Use My Location</button>
+      <div class="mt-3 mb-2">
+        <label>Latitude</label>
+        <input type="text" id="latitude" name="latitude" readonly class="form-control"/>
+        <label class="mt-2">Longitude</label>
+        <input type="text" id="longitude" name="longitude" readonly class="form-control"/>
+      </div>
+      <div id="map" class="mt-3"></div>
+    </div>
+
+    <div class="card p-3 mb-3">
+      <h5>Scrap Items</h5>
+      {{ formset.management_form }}
+      <div id="formset-container">
+        {% for form in formset %}
+        <div class="row mb-2 formset-form">
+          <div class="col-md-6">{{ form.category }}</div>
+          <div class="col-md-4">{{ form.approx_weight }}</div>
+          <div class="col-md-2">{{ form.DELETE }}<label>Delete</label></div>
+        </div>
+        {% endfor %}
+      </div>
+
+      <!-- empty_form template -->
+      <div id="empty-form-template" style="display:none;">
+        <div class="row mb-2 formset-form">
+          <div class="col-md-6">{{ formset.empty_form.category }}</div>
+          <div class="col-md-4">{{ formset.empty_form.approx_weight }}</div>
+          <div class="col-md-2">{{ formset.empty_form.DELETE }}<label>Delete</label></div>
+        </div>
+      </div>
+
+      <button type="button" id="add-item" class="btn btn-secondary btn-sm mt-2">Add Item</button>
+    </div>
+
+    <button type="submit" class="btn btn-success">Submit Request</button>
+  </form>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+<script>
+// ---------- Leaflet Map Setup ----------
+var map = L.map("map").setView([20.5937, 78.9629], 5); // Default India view
+L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+    attribution: "&copy; OpenStreetMap contributors"
+}).addTo(map);
+
+var marker;
+
+// Update hidden fields when lat/lng selected
+function updateLatLng(lat, lng) {
+    document.getElementById("latitude").value = lat;
+    document.getElementById("longitude").value = lng;
+}
+
+// Click on map to drop a marker
+map.on("click", function(e) {
+    if (marker) map.removeLayer(marker);
+    marker = L.marker(e.latlng).addTo(map);
+    updateLatLng(e.latlng.lat, e.latlng.lng);
+});
+
+// Use browser location
+function useMyLocation() {
+    if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(function(pos) {
+            var lat = pos.coords.latitude;
+            var lng = pos.coords.longitude;
+            map.setView([lat, lng], 15);
+            if (marker) map.removeLayer(marker);
+            marker = L.marker([lat, lng]).addTo(map);
+            updateLatLng(lat, lng);
+        }, function() {
+            alert("Unable to retrieve your location.");
+        });
+    } else {
+        alert("Geolocation is not supported by this browser.");
+    }
+}
+
+// ---------- Dynamic Formset Handling ----------
+document.getElementById("add-item").addEventListener("click", function() {
+    let formsetContainer = document.getElementById("formset-container");
+    let totalForms = document.getElementById("id_form-TOTAL_FORMS");
+    let formCount = parseInt(totalForms.value);
+
+    // Clone template & replace __prefix__ with current form count
+    let newFormHtml = document.getElementById("empty-form-template").innerHTML.replace(/__prefix__/g, formCount);
+
+    // Append new form to container
+    formsetContainer.insertAdjacentHTML("beforeend", newFormHtml);
+
+    // Update management form count
+    totalForms.value = formCount + 1;
+});
+</script>
+{% endblock %}

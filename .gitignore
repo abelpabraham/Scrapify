@@ -1,0 +1,64 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.pyc
+*$py.class
+
+# Virtual Environment
+venv/
+env/
+ENV/
+.venv/
+.python-version
+
+# Django Stuff
+*.log
+*.pot
+*.pyc
+*.pyo
+*.pyd
+*.db
+db.sqlite3
+media/
+staticfiles/
+static_root/
+*.sqlite3
+
+# Migrations (keep __init__.py but ignore auto migrations)
+**/migrations/*.py
+!**/migrations/__init__.py
+
+# VSCode / PyCharm / Editors
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
+
+# OS Files
+.DS_Store
+Thumbs.db
+ehthumbs.db
+*.swp
+*.swo
+
+# Python tooling
+.coverage
+htmlcov/
+*.egg-info/
+.eggs/
+dist/
+build/
+pip-wheel-metadata/
+*.egg
+
+# Node (if you ever use frontend with npm/yarn)
+node_modules/
+npm-debug.log
+yarn-error.log
+
+# Environments & secrets
+.env
+*.env
+.env.local

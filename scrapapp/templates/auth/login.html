@@ -1,0 +1,74 @@
+{% load static %}
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/><meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Login / Register — Scrapify</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="{% static 'assets/css/main.css' %}" rel="stylesheet">
+</head>
+<body class="bg-light-app">
+  <div class="container py-5">
+    <div class="row g-4 align-items-center">
+      <div class="col-lg-6">
+        <div class="auth-hero p-4 rounded-4 soft-card">
+          <h2 class="fw-bold">Join Scrapify</h2>
+          <p class="text-muted">Track pickups, earn from recycled material, and support circular cities.</p>
+          <img src="{% static 'assets/img/robot-with-trash-recycle-symbol.jpg' %}" class="img-fluid mt-3" alt="3D recyclable objects">
+        </div>
+      </div>
+
+      <div class="col-lg-6">
+        <div id="auth-panel" class="auth-form-panel soft-card p-4 rounded-4">
+          <div class="d-flex justify-content-between align-items-center mb-3">
+            <h4 class="mb-0">Sign in</h4>
+            <a href="{% url 'register' %}" class="btn btn-sm btn-outline-muted">New User? -Register</a>
+
+          </div>
+          <!-- Django messages -->
+          {% if messages %}
+            <div class="mb-3">
+              {% for message in messages %}
+                <div class="alert 
+                            {% if message.tags == 'success' %}alert-success
+                            {% elif message.tags == 'error' %}alert-danger
+                            {% elif message.tags == 'warning' %}alert-warning
+                            {% else %}alert-info{% endif %} 
+                            alert-dismissible fade show" role="alert">
+                  {{ message }}
+                  <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+              {% endfor %}
+            </div>
+          {% endif %}
+
+
+          <!-- REGISTER FORM (hidden by default via CSS toggle) -->
+          <form method="post" class="auth-form mt-3">
+            {% csrf_token %}
+
+            <div class="mb-3">
+              {{ form.email.label_tag }}
+              {{ form.email }}
+              {% if form.email.errors %}
+                <div class="text-danger small">{{ form.email.errors }}</div>
+              {% endif %}
+            </div>
+
+            <div class="mb-3">
+              {{ form.password.label_tag }}
+              {{ form.password }}
+            </div>
+            <button type="submit" class="btn btn-cta w-100">Login</button>
+          </form>
+
+        </div>
+      </div>
+    </div>
+  </div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<script src="assets/js/main.js"></script>
+
+</body>
+</html>
